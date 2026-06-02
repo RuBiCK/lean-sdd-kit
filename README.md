@@ -39,7 +39,8 @@ See [`WORKFLOW.md`](./WORKFLOW.md) for the full loop and how it compares to spec
 | **PRD** | *Why* and *what* — the intent of an initiative | `docs/prds/<state>/` | ✅ yes |
 | **Spec** | *How* — the agent-executable plan of work | `docs/specs/<state>/` | ✅ yes |
 | **ADR** | *Why we chose X* — an architectural decision | `docs/adr/` | ❌ append-only log |
-| **CLAUDE.md** | The standing rules of the repo (principles, commands, conventions) | repo root | n/a (living) |
+| **CLAUDE.md** | The standing rules of the repo (principles, conventions, Definition of Done) | repo root | n/a (living) |
+| **STACK.md** | The toolset: languages, package map, build/test/lint/run commands | repo root | n/a (living) |
 
 > A small feature can be **just a spec** (its header carries the lightweight "why"). A larger initiative gets a **PRD + one or more specs**.
 
@@ -71,39 +72,46 @@ Full version, with every document-creation and git event, in [`WORKFLOW.md`](./W
 - **A. "Use this template" button** (no terminal): click *Use this template → Create a new repository* at the top of [the GitHub repo](https://github.com/RuBiCK/lean-sdd-kit). You get a fresh repo with these files and a clean history.
 - **B. `npx degit`** (terminal, no history): `npx degit RuBiCK/lean-sdd-kit my-project` — downloads just the files, no `.git`, ready to `git init`.
 
-Then:
+Then **set it up** — two equivalent paths:
+
+**Agentic (Claude Code).** Open your agent in the new repo and say:
+
+> *"Run `sdd-setup`."*
+
+The `sdd-setup` skill interviews you for your toolset (writes [`STACK.md`](./STACK.md)), drafts your `PRD-0001` charter and `CLAUDE.md` Principles, and records your stack as an ADR. Then write your first slice of work — *"Run `sdd-new spec bootstrap-app`"* — and build it — *"Run `sdd-build`"*. No commands to memorize.
+
+**Manual (any editor).**
 
 ```bash
-cd my-project   # (only if you used method B; method A clones your new repo)
-# git init && git add -A && git commit -m "chore: bootstrap from lean-sdd-kit"   # method B only
+cd my-project   # method B only; method A already cloned your new repo
 
-# 2. Write your project charter — this is PRD-0001
-cp docs/prds/_TEMPLATE.md docs/prds/doing/0001-project-charter.md
-$EDITOR docs/prds/doing/0001-project-charter.md   # problem, users, goals, scope, non-goals
+# 1. Fill the toolset
+$EDITOR STACK.md            # languages, package manager, package map, commands
 
-# 3. Make the rules yours
-$EDITOR CLAUDE.md           # fill in Principles + build/test/lint/run commands
+# 2. Write your project charter (PRD-0001) and make the rules yours
+./scripts/new.sh prd project-charter && git mv docs/prds/backlog/0001-* docs/prds/doing/
+$EDITOR docs/prds/doing/0001-project-charter.md
+$EDITOR CLAUDE.md           # fill the Principles + project one-liner
 
-# 4. Record your first real decision (e.g. the stack)
-cp docs/adr/_TEMPLATE.md docs/adr/0003-choose-stack.md
-
-# 5. Write the first slice of work as a spec, then hand it to your agent
-cp docs/specs/_TEMPLATE.md docs/specs/backlog/0001-bootstrap-app.md
+# 3. Record the stack decision, then write the first spec
+./scripts/new.sh adr choose-stack
+./scripts/new.sh spec bootstrap-app
+$EDITOR docs/specs/backlog/0001-bootstrap-app.md
 ```
 
-Then open your agent and say: *"Read CLAUDE.md and WORKFLOW.md, pick up `docs/specs/backlog/0001-bootstrap-app.md`, and build it."*
-
-> Prefer a helper? `./scripts/new.sh spec bootstrap-app` creates the next-numbered spec from the template in `backlog/` for you. See [`scripts/`](./scripts).
-
 ## Quickstart — add a feature to an existing project
+
+**Agentic:** *"Run `sdd-new spec export-csv`"* (it asks which packages it touches), fill it, then *"Run `sdd-build`"*.
+
+**Manual:**
 
 ```bash
 ./scripts/new.sh spec export-csv        # → docs/specs/backlog/000N-export-csv.md
 # (optional) for a multi-spec initiative, also: ./scripts/new.sh prd billing
-$EDITOR docs/specs/backlog/000N-export-csv.md
+$EDITOR docs/specs/backlog/000N-export-csv.md   # fill Context → Tasks → Acceptance → Verification
 ```
 
-Fill *Context & Goal → Tasks → Acceptance criteria → Verification*, then run the loop.
+Then run the loop in [`WORKFLOW.md`](./WORKFLOW.md).
 
 ## Repository layout
 
@@ -111,10 +119,14 @@ Fill *Context & Goal → Tasks → Acceptance criteria → Verification*, then r
 lean-sdd-kit/
 ├── README.md                 # you are here
 ├── LICENSE                   # MIT
-├── CLAUDE.md                 # agent operating guide: principles, commands, conventions
+├── CLAUDE.md                 # agent operating guide: principles, conventions, DoD
+├── STACK.md                  # toolset: languages, package map, build/test/lint/run commands
 ├── WORKFLOW.md               # the full agentic loop + diagrams + skills appendix
+├── .claude/                  # optional Claude Code adapter (travels with the kit)
+│   ├── skills/               # sdd-setup, sdd-new, sdd-build
+│   └── agents/               # spec-writer, builder, reviewer
 ├── scripts/
-│   └── new.sh                # optional: scaffold next-numbered prd/spec/adr
+│   └── new.sh                # scaffold next-numbered prd/spec/adr (no deps; the skills use it)
 └── docs/
     ├── prds/
     │   ├── _TEMPLATE.md
@@ -155,7 +167,17 @@ Cross-cutting decisions are repo-wide ADRs; package-local conventions can be not
 
 ## Using it with AI agents
 
-Point your agent at `CLAUDE.md` and `WORKFLOW.md` at the start of a session. The specs are written *for* an agent: tasks are bite-sized, acceptance criteria are checkboxes, and every spec ends with the exact commands to verify the work. The appendix in `WORKFLOW.md` maps each phase to concrete skills/commands (e.g. brainstorming → writing-plans → TDD → code-review).
+Point your agent at `CLAUDE.md`, `STACK.md`, and `WORKFLOW.md` at the start of a session. The specs are written *for* an agent: tasks are bite-sized, acceptance criteria are checkboxes, and every spec ends with the exact commands to verify the work.
+
+If you use **Claude Code**, the kit ships a `.claude/` adapter that travels with it:
+
+| Skill | What it does |
+|---|---|
+| `sdd-setup` | Bootstraps a new project — interviews you for the stack → `STACK.md` + charter + first ADR |
+| `sdd-new` | Scaffolds the next-numbered PRD/spec/ADR and helps fill it |
+| `sdd-build` | Picks up a spec → builds → reviews → promotes to `done/` |
+
+`sdd-build` dispatches three tuned **subagents** so each job runs in a focused, tool-scoped context: **`spec-writer`**, **`builder`** (test-first), and a **read-only `reviewer`** (it diagnoses; the builder fixes). Other tools? Ignore `.claude/` — the docs and `scripts/new.sh` work standalone, and `WORKFLOW.md`'s appendix maps each phase to generic skills/commands.
 
 ## Credits & inspiration
 

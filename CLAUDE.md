@@ -30,6 +30,7 @@ These govern **every** PRD, spec, and line of code. They outrank convenience.
 | How — the unit of work (spec) | `docs/specs/<state>/NNNN-slug.md` |
 | Why we chose X (ADR) | `docs/adr/NNNN-slug.md` (append-only) |
 | The rules (this file) | `CLAUDE.md` |
+| The toolset & commands | `STACK.md` |
 | The process | `WORKFLOW.md` |
 
 States: `backlog/` (ready) · `doing/` (in progress) · `done/` (shipped).
@@ -54,20 +55,10 @@ A spec is `done` only when **all** are true:
 
 ## Commands
 
-<!-- Fill these in for your stack. In a monorepo, prefer workspace-aware runners. -->
-
-```bash
-# install
-<install cmd>            # e.g. pnpm install
-# build
-<build cmd>             # e.g. pnpm -r build
-# test (the source of truth for "done")
-<test cmd>              # e.g. pnpm -r test
-# lint / format
-<lint cmd>             # e.g. pnpm -r lint
-# run locally
-<run cmd>              # e.g. pnpm dev
-```
+The canonical build/test/lint/run commands and the monorepo package map live in
+**[`STACK.md`](./STACK.md)** — the single source of truth for tooling. Specs' **Verification**
+sections and the Definition of Done run those commands. Fill `STACK.md` at setup (the
+`sdd-setup` skill interviews you); don't duplicate commands here.
 
 ## Conventions
 
@@ -82,6 +73,15 @@ A spec is `done` only when **all** are true:
 - One root `docs/` kanban for the whole repo — see all WIP at once.
 - A spec declares affected packages in frontmatter: `packages: [apps/web, packages/api]`.
 - Repo-wide choices → root ADRs. A package may keep its own `CLAUDE.md` for local conventions, but it must **defer to this file** for principles and status rules.
+
+## Automation (Claude Code adapter)
+
+This kit ships an optional `.claude/` layer that travels with the repo:
+
+- **Skills** (`.claude/skills/`): `sdd-setup` (bootstrap: interview for the stack → `STACK.md` + charter), `sdd-new` (scaffold the next PRD/spec/ADR), `sdd-build` (pick up a spec → build → review → promote).
+- **Subagents** (`.claude/agents/`): `spec-writer`, `builder` (test-first), `reviewer` (read-only). `sdd-build` dispatches these so each task runs in a focused, tool-scoped context.
+
+Using a different agent tool? Ignore `.claude/` — the docs and `scripts/new.sh` work standalone.
 
 ## Next
 

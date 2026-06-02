@@ -131,9 +131,23 @@ We borrow spec-kit's *constitution* (→ Principles in `CLAUDE.md`), its explici
 
 ---
 
-## Appendix — phase → skills / commands
+## Appendix — phase → skills / agents
 
-This kit is tool-neutral, but if you use [Claude Code Superpowers](https://github.com/obra/superpowers) (or similar), map the phases like so:
+### Kit-native (Claude Code adapter, `.claude/`)
+
+The kit ships skills and subagents that travel with it. They orchestrate the loop directly:
+
+| Phase | Skill | Subagent it dispatches |
+|---|---|---|
+| Setup (new project) | `sdd-setup` (interview → `STACK.md`, charter, ADR) | — |
+| Frame · Clarify · Spec | `sdd-new` | `spec-writer` |
+| Plan · Build · Review · Integrate | `sdd-build` | `builder` (test-first), then read-only `reviewer` |
+
+`sdd-build` runs `builder` and `reviewer` in **separate, tool-scoped contexts** — the reviewer is read-only so it can't make its own work pass. This is the "fine-tune each task" idea: one agent per role.
+
+### Generic mapping
+
+If you use [Claude Code Superpowers](https://github.com/obra/superpowers) (or similar) instead, map the phases like so:
 
 | Phase | Skill / command |
 |---|---|
