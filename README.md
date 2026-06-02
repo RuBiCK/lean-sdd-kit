@@ -66,10 +66,16 @@ Full version, with every document-creation and git event, in [`WORKFLOW.md`](./W
 
 ## Quickstart — start a new project
 
+**Get the skeleton** — pick either method (both work, they're equivalent):
+
+- **A. "Use this template" button** (no terminal): click *Use this template → Create a new repository* at the top of [the GitHub repo](https://github.com/RuBiCK/lean-sdd-kit). You get a fresh repo with these files and a clean history.
+- **B. `npx degit`** (terminal, no history): `npx degit RuBiCK/lean-sdd-kit my-project` — downloads just the files, no `.git`, ready to `git init`.
+
+Then:
+
 ```bash
-# 1. Copy the skeleton into your new repo (no fork/history needed)
-npx degit RuBiCK/lean-sdd-kit my-project   # or: git clone … && rm -rf .git && git init
-cd my-project
+cd my-project   # (only if you used method B; method A clones your new repo)
+# git init && git add -A && git commit -m "chore: bootstrap from lean-sdd-kit"   # method B only
 
 # 2. Write your project charter — this is PRD-0001
 cp docs/prds/_TEMPLATE.md docs/prds/doing/0001-project-charter.md
