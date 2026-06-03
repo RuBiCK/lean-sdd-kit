@@ -10,27 +10,21 @@ This is the full lifecycle: **which document is created at each step, when you c
 ## The seven phases
 
 ```mermaid
-flowchart TD
-    subgraph think["THINK (cheap to change)"]
-        F["**1. Frame**<br/>capture intent"]
-        C["**2. Clarify**<br/>resolve unknowns"]
-        S["**3. Spec**<br/>make it executable"]
+flowchart LR
+    subgraph think["THINK · cheap to change"]
+        direction LR
+        F["1 · Frame<br/>capture intent"] --> C["2 · Clarify<br/>resolve unknowns"] --> S["3 · Spec<br/>make it executable"]
     end
-    subgraph build["BUILD (expensive to change)"]
-        P["**4. Plan**<br/>task breakdown"]
-        B["**5. Build**<br/>TDD + commits"]
-        R["**6. Review**<br/>PR + verify + PRD↔Spec check"]
-        I["**7. Integrate**<br/>merge"]
+    subgraph build["BUILD · expensive to change"]
+        direction LR
+        P["4 · Plan<br/>task breakdown"] --> B["5 · Build<br/>TDD + commits"] --> R["6 · Review<br/>verify + PRD↔Spec"] --> I["7 · Integrate<br/>merge"]
     end
-
-    F --> C --> S --> P --> B --> R --> I
-    R -->|changes requested| B
-    C -->|too big / multi-spec| S
-
-    classDef think fill:#eef6ff,stroke:#4a90d9;
-    classDef build fill:#eefbf0,stroke:#3ca85b;
-    class F,C,S think;
-    class P,B,R,I build;
+    S ==>|point of no cheap return| P
+    R -.->|changes requested| B
+    classDef think fill:#eef6ff,stroke:#4a90d9,color:#1a3a5c;
+    classDef build fill:#eefbf0,stroke:#3ca85b,color:#14401f;
+    class F,C,S think
+    class P,B,R,I build
 ```
 
 The line between **THINK** and **BUILD** is the point of no cheap return: changing a spec costs minutes, changing shipped code costs hours. Spend your effort on the left.
@@ -56,15 +50,14 @@ The line between **THINK** and **BUILD** is the point of no cheap return: changi
 ```mermaid
 stateDiagram-v2
     direction LR
-    [*] --> backlog: created (Frame / Spec)
-    backlog --> doing: work starts (Plan)\ngit mv + branch
-    doing --> done: PR merged (Integrate)\ngit mv
+    [*] --> backlog: created · Frame / Spec
+    backlog --> doing: Plan · git mv + branch
+    doing --> done: Integrate · PR merged + git mv
     done --> [*]
-
-    note right of backlog: prds/backlog/ · specs/backlog/
-    note right of doing: prds/doing/ · specs/doing/\nWIP ≤ 2
-    note right of done: prds/done/ · specs/done/
+    note right of doing: WIP ≤ 2 items
 ```
+
+A document's file path is its state: `docs/specs/backlog/` → `…/doing/` → `…/done/` (same for `prds/`).
 
 ADRs do **not** flow — they are an append-only decision log. Supersede an old ADR with a new one; never delete.
 

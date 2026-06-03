@@ -46,21 +46,23 @@ See [`WORKFLOW.md`](./WORKFLOW.md) for the full loop and how it compares to spec
 
 ## The workflow at a glance
 
+Each box is a phase; the small line under it is the document/git artifact it produces. Blue = THINK (cheap to change), green = BUILD (expensive to change).
+
 ```mermaid
 flowchart LR
-    F["1 Frame<br/><sub>draft PRD</sub>"] --> C["2 Clarify<br/><sub>resolve unknowns</sub>"]
-    C --> S["3 Spec<br/><sub>write spec</sub>"]
-    S --> P["4 Plan<br/><sub>task breakdown</sub>"]
-    P --> B["5 Build<br/><sub>TDD, commits</sub>"]
-    B --> R["6 Review<br/><sub>PR + verify</sub>"]
-    R --> I["7 Integrate<br/><sub>merge</sub>"]
+    F["1 · Frame<br/>PRD → backlog/"]
+    C["2 · Clarify<br/>decisions → ADR"]
+    S["3 · Spec<br/>spec → backlog/"]
+    P["4 · Plan<br/>spec → doing/"]
+    B["5 · Build<br/>commit per task"]
+    R["6 · Review<br/>PR + verify"]
+    I["7 · Integrate<br/>merge → done/"]
+    F --> C --> S --> P --> B --> R --> I
     R -.->|changes requested| B
-
-    F -.-> d1["📄 PRD → prds/backlog/"]
-    S -.-> d2["📄 spec → specs/backlog/"]
-    P -.-> d3["spec → specs/doing/"]
-    R -.-> d4["open PR"]
-    I -.-> d5["spec/PRD → done/ on merge"]
+    classDef think fill:#eef6ff,stroke:#4a90d9,color:#1a3a5c;
+    classDef build fill:#eefbf0,stroke:#3ca85b,color:#14401f;
+    class F,C,S think
+    class P,B,R,I build
 ```
 
 Full version, with every document-creation and git event, in [`WORKFLOW.md`](./WORKFLOW.md).
