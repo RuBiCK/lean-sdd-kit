@@ -10,7 +10,7 @@ Start a new project fast, build autonomously, and keep everything documented —
 
 ## What is this?
 
-`lean-sdd-kit` is a **copy-and-go repository skeleton** for building software with an AI coding agent (Claude Code, Cursor, Copilot, …) as a first-class collaborator. It gives you four documented artifacts and one rule:
+`lean-sdd-kit` is a **copy-and-go repository skeleton** for building software with an AI coding agent (Claude Code, Cursor, Copilot, …) as a first-class collaborator. It gives you a handful of documented artifacts and one rule:
 
 > **The directory a document lives in *is* its status.** `backlog/ → doing/ → done/`. Move it with `git mv`. No status field, nothing to keep in sync.
 
@@ -32,7 +32,9 @@ This kit takes the parts of SDD that pay off for a small team and drops the cere
 
 See [`WORKFLOW.md`](./WORKFLOW.md) for the full loop and how it compares to spec-kit, Kiro, BMAD, OpenSpec and Tessl.
 
-## The four artifacts
+## The documents
+
+Three **work documents** that flow through states, and two **living documents** that don't:
 
 | Doc | Question it answers | Lives in | Flows through states? |
 |---|---|---|---|
@@ -43,6 +45,8 @@ See [`WORKFLOW.md`](./WORKFLOW.md) for the full loop and how it compares to spec
 | **STACK.md** | The toolset: languages, package map, build/test/lint/run commands | repo root | n/a (living) |
 
 > A small feature can be **just a spec** (its header carries the lightweight "why"). A larger initiative gets a **PRD + one or more specs**.
+>
+> 👀 See a filled-in PRD + spec in [`docs/examples/`](./docs/examples).
 
 ## The workflow at a glance
 
@@ -91,7 +95,8 @@ cd my-project   # method B only; method A already cloned your new repo
 $EDITOR STACK.md            # languages, package manager, package map, commands
 
 # 2. Write your project charter (PRD-0001) and make the rules yours
-./scripts/new.sh prd project-charter && git mv docs/prds/backlog/0001-* docs/prds/doing/
+./scripts/new.sh prd project-charter
+mv docs/prds/backlog/0001-project-charter.md docs/prds/doing/   # brand-new file → plain mv
 $EDITOR docs/prds/doing/0001-project-charter.md
 $EDITOR CLAUDE.md           # fill the Principles + project one-liner
 
@@ -99,7 +104,13 @@ $EDITOR CLAUDE.md           # fill the Principles + project one-liner
 ./scripts/new.sh adr choose-stack
 ./scripts/new.sh spec bootstrap-app
 $EDITOR docs/specs/backlog/0001-bootstrap-app.md
+
+# 4. Commit your foundation
+git add -A && git commit -m "chore: project charter, stack decision, first spec"
 ```
+
+> Use plain `mv` for a **brand-new** file (it isn't tracked yet). `git mv` is for promoting docs
+> that are **already committed** between states later — see *Status model* below.
 
 ## Quickstart — add a feature to an existing project
 
@@ -132,15 +143,18 @@ lean-sdd-kit/
 └── docs/
     ├── prds/
     │   ├── _TEMPLATE.md
-    │   ├── backlog/  doing/  done/
+    │   └── backlog/  doing/  done/      # empty kanban — your PRDs flow through here
     ├── specs/
     │   ├── _TEMPLATE.md
-    │   ├── backlog/  doing/  done/
-    └── adr/
-        ├── _TEMPLATE.md
-        ├── 0001-record-architecture-decisions.md
-        └── 0002-directory-based-status.md
+    │   └── backlog/  doing/  done/      # empty kanban — your specs flow through here
+    ├── adr/
+    │   ├── _TEMPLATE.md
+    │   ├── 0001-record-architecture-decisions.md
+    │   └── 0002-directory-based-status.md
+    └── examples/                         # a worked PRD + spec to read, then delete
 ```
+
+The kanban (`backlog/doing/done`) ships **empty**, so your first PRD and spec start at `0001`. The two seed ADRs document the method itself; keep or replace them.
 
 ## Status model — kanban in your filesystem
 

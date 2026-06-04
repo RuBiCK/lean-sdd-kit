@@ -8,8 +8,9 @@ created: 2026-06-02
 
 # SPEC-0001 — EXAMPLE — Add, list, and complete tasks
 
-> ⚠️ **This is a worked example.** Delete it when you start your real project.
-> It shows a completed, agent-executable spec living in `done/`.
+> ⚠️ **Worked example** — lives in `docs/examples/`, outside the kanban. Shows a completed,
+> agent-executable spec (the *Tasks → Acceptance → Verification* shape). Delete `docs/examples/`
+> when you no longer need the reference.
 
 ## Context & Goal
 Deliver the v1 vertical slice of the todo app (see PRD-0001): a user can add a task,

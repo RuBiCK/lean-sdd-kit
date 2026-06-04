@@ -8,8 +8,9 @@ specs: [SPEC-0001]
 
 # PRD-0001 — EXAMPLE — Minimal todo app
 
-> ⚠️ **This is a worked example.** Delete it (and `SPEC-0001`) when you start your real project.
-> It shows what a finished, shipped initiative looks like in `done/`.
+> ⚠️ **Worked example** — lives in `docs/examples/`, outside the kanban, so it doesn't affect ID
+> numbering. Read it with `spec-add-list-complete-tasks.md` to see a finished PRD + its child spec,
+> then delete `docs/examples/` when you no longer need the reference.
 
 ## Problem / why now
 People juggling small tasks across sticky notes lose track of them. We want the smallest

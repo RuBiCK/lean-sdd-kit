@@ -9,7 +9,7 @@ Run this once, when a project copied from lean-sdd-kit has no charter yet (no PR
 
 ## Procedure
 
-1. **Detect state.** If `docs/prds/done/0001-EXAMPLE-*` exists, ask the user if you may delete the EXAMPLE PRD/spec; remove them once confirmed.
+1. **Detect state.** If `docs/examples/` exists, ask the user if you may delete it (it's reference-only and outside the kanban); remove it once confirmed.
 
 2. **Interview for the toolset — one question at a time.** Ask, in order, and write answers into `STACK.md`:
    - Languages & runtimes (and versions).
@@ -20,7 +20,7 @@ Run this once, when a project copied from lean-sdd-kit has no charter yet (no PR
    - Tooling conventions (formatters, commit hooks, env files).
    Confirm `STACK.md` reads correctly before moving on.
 
-3. **Draft the charter.** Run `./scripts/new.sh prd project-charter`, then `git mv` it to `docs/prds/doing/`. Interview the user to fill it: problem, target users, goals & metrics, scope, non-goals.
+3. **Draft the charter.** Run `./scripts/new.sh prd project-charter`, then move it to `docs/prds/doing/` with plain `mv` (it's brand-new and not yet tracked — `git mv` only works on committed files). Interview the user to fill it: problem, target users, goals & metrics, scope, non-goals.
 
 4. **Fill Principles.** In `CLAUDE.md`, complete the project one-liner and add any project-specific principles the user states. Keep the list short.
 
